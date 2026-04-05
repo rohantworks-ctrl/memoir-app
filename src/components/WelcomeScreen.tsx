@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Heart, LogIn } from 'lucide-react';
-import { signInWithGoogle } from '../firebase';
+import { signInWithGoogle, ensureUserExists } from '../firebase';
 
 export const WelcomeScreen: React.FC = () => {
   const [loading, setLoading] = useState(false);
@@ -10,7 +10,8 @@ export const WelcomeScreen: React.FC = () => {
     setLoading(true);
     setError('');
     try {
-      await signInWithGoogle();
+      const user = await signInWithGoogle();
+      await ensureUserExists(user);
     } catch (e: any) {
       setError("Failed to sign in. Please try again.");
     } finally {

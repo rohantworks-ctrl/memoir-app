@@ -17,7 +17,22 @@ const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+import type { User } from 'firebase/auth';
+
 const storage = getStorage(app);
+
+export const ensureUserExists = async (user: User) => {
+  const ref = doc(db, 'users', user.uid);
+  const snap = await getDoc(ref);
+  if (!snap.exists()) {
+    await setDoc(ref, {
+      uid: user.uid,
+      email: user.email,
+      coupleId: null,
+      createdAt: new Date()
+    });
+  }
+};
 
 export const signInWithGoogle = async () => {
   try {
